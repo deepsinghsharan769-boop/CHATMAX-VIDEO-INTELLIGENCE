@@ -644,13 +644,11 @@ fetch("/api/session")
 
 <script>
 function goToStudio() {
-  document.getElementById("studio").scrollIntoView({
-    behavior: "smooth"
-  });
+  window.location.href = "/dashboard.html";
 }
 
 function launchMessage() {
-  alert("Welcome to CHATMAX! The editing studio will be connected in the next development stage.");
+  window.location.href = "/dashboard.html";
 }
 </script>
 

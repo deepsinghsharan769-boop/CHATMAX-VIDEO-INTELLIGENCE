@@ -464,7 +464,27 @@ footer {
 </head>
 
 <body>
+<script>
+document.documentElement.style.visibility = "hidden";
 
+fetch("/api/session")
+  .then(response => {
+    if (response.ok) {
+      return response.json();
+    }
+    throw new Error("Not logged in");
+  })
+  .then(data => {
+    if (data.authenticated) {
+      document.documentElement.style.visibility = "visible";
+    } else {
+      window.location.replace("/login.html");
+    }
+  })
+  .catch(() => {
+    window.location.replace("/login.html");
+  });
+</script>
 <nav>
   <div class="logo">CHAT<span>MAX</span></div>
 

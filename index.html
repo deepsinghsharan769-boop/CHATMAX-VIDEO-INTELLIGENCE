@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#070711">
+
+<title>CHATMAX — Video Intelligence</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+:root {
+  --bg: #070711;
+  --purple: #8965ff;
+  --blue: #4e9cff;
+  --text: #f6f5ff;
+  --muted: #9292aa;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: Inter, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse at 15% 20%, #5632a52b, transparent 40%),
+    radial-gradient(ellipse at 85% 40%, #1763a329, transparent 40%);
+}
+
+/* NAVBAR */
+
+nav {
+  width: 100%;
+  height: 82px;
+  padding: 0 7%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #ffffff12;
+  background: #090916bd;
+  backdrop-filter: blur(20px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.logo {
+  font-size: 23px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.logo span { color: var(--purple); }
+
+.nav-links {
+  display: flex;
+  gap: 35px;
+  align-items: center;
+}
+
+.nav-links a {
+  color: #b5b4c9;
+  text-decoration: none;
+  font-size: 13px;
+  transition: .3s;
+}
+
+.nav-links a:hover { color: white; }
+
+.nav-btn, .primary-btn {
+  border: 0;
+  color: white;
+  padding: 13px 22px;
+  border-radius: 9px;
+  font-weight: 700;
+  background: linear-gradient(110deg, #805aff, #438dff);
+  cursor: pointer;
+  box-shadow: 0 0 25px #805aff44;
+  transition: .3s;
+}
+
+.nav-btn:hover, .primary-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 35px #805aff77;
+}
+
+/* HERO */
+
+.hero {
+  min-height: 750px;
+  padding: 100px 7% 70px;
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  align-items: center;
+  gap: 50px;
+}
+
+.tag {
+  display: inline-block;
+  color: #b8a9ff;
+  background: #8b68ff18;
+  border: 1px solid #8b68ff44;
+  border-radius: 30px;
+  padding: 9px 16px;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  margin-bottom: 27px;
+}
+
+.hero h1 {
+  font-size: clamp(42px, 5.5vw, 76px);
+  line-height: 1.08;
+  letter-spacing: -4px;
+  font-weight: 900;
+}
+
+.gradient-text {
+  background: linear-gradient(100deg, #a58aff, #64b4ff, #d28aff);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.hero p {
+  max-width: 500px;
+  color: var(--muted);
+  line-height: 1.9;
+  font-size: 15px;
+  margin: 25px 0 30px;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.secondary-btn {
+  padding: 13px 22px;
+  color: white;
+  border: 1px solid #ffffff25;
+  background: #ffffff08;
+  border-radius: 9px;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.secondary-btn:hover { background: #ffffff15; }
+
+.note {
+  font-size: 11px;
+  color: #73738c;
+  margin-top: 25px;
+}
+
+/* 3D EDITOR */
+
+.scene {
+  perspective: 1200px;
+  position: relative;
+  min-height: 480px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.orb {
+  position: absolute;
+  width: 340px;
+  height: 340px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #8b5cff55, #308aff33);
+  filter: blur(65px);
+  animation: pulse 5s infinite alternate;
+}
+
+@keyframes pulse {
+  from { transform: scale(.8); opacity: .5; }
+  to { transform: scale(1.2); opacity: .9; }
+}
+
+.editor {
+  position: relative;
+  width: min(100%, 550px);
+  padding: 15px;
+  border: 1px solid #ffffff2a;
+  border-radius: 18px;
+  background: linear-gradient(145deg, #202039e8, #10101deb);
+  box-shadow: 0 35px 100px #000a, 0 0 50px #8060ff26;
+  transform: rotateY(-13deg) rotateX(7deg);
+  animation: float 6s ease-in-out infinite;
+  transform-style: preserve-3d;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotateY(-13deg) rotateX(7deg); }
+  50% { transform: translateY(-17px) rotateY(-9deg) rotateX(5deg); }
+}
+
+.editor-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 4px 15px;
+}
+
+.dots { display: flex; gap: 6px; }
+.dots i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ff647c;
+}
+.dots i:nth-child(2) { background: #ffc65e; }
+.dots i:nth-child(3) { background: #5cdd9b; }
+
+.editor-title {
+  color: #aaa9c0;
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+.preview {
+  height: 220px;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+  background:
+    linear-gradient(0deg, #080914, transparent 80%),
+    radial-gradient(ellipse at 50% 35%, #8b64c4, transparent 40%),
+    linear-gradient(120deg, #152b4c, #40305f, #101b2f);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.preview::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    120deg,
+    transparent 0 35px,
+    #ffffff08 36px 37px
+  );
+}
+
+.play {
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  background: #ffffff24;
+  border: 1px solid #ffffff66;
+  display: grid;
+  place-items: center;
+  backdrop-filter: blur(10px);
+  font-size: 19px;
+}
+
+.preview-label {
+  position: absolute;
+  bottom: 17px;
+  left: 18px;
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: #ded9ff;
+}
+
+.timeline-ui {
+  margin-top: 13px;
+  padding: 12px;
+  background: #090b16;
+  border-radius: 9px;
+}
+
+.track {
+  height: 24px;
+  display: flex;
+  gap: 5px;
+  margin: 6px 0;
+}
+
+.clip {
+  border-radius: 4px;
+  background: linear-gradient(90deg, #7957e8, #438dff);
+  opacity: .85;
+}
+
+.clip:nth-child(2) {
+  background: linear-gradient(90deg, #b15be9, #805aff);
+}
+
+.clip:nth-child(3) {
+  background: linear-gradient(90deg, #287cba, #4e9cff);
+}
+
+.audio {
+  height: 16px;
+  background: repeating-linear-gradient(
+    90deg, #48a9b8 0 3px, transparent 3px 7px
+  );
+  opacity: .7;
+}
+
+.float-card {
+  position: absolute;
+  padding: 15px 18px;
+  border-radius: 12px;
+  background: #17172bdc;
+  border: 1px solid #ffffff25;
+  backdrop-filter: blur(15px);
+  box-shadow: 0 15px 45px #0008;
+  font-size: 11px;
+  animation: float 5s infinite ease-in-out;
+}
+
+.float-card strong {
+  display: block;
+  color: #bbaaff;
+  margin-bottom: 5px;
+}
+
+.card-one { top: 28px; right: -10px; }
+.card-two { bottom: 25px; left: -20px; animation-delay: 1s; }
+
+/* SECTIONS */
+
+section.content {
+  padding: 90px 7%;
+}
+
+.section-heading {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.section-heading h2 {
+  font-size: clamp(28px, 4vw, 43px);
+  margin-bottom: 14px;
+}
+
+.section-heading p {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.feature {
+  background: linear-gradient(145deg, #17172a, #0d0e19);
+  border: 1px solid #ffffff13;
+  padding: 30px;
+  border-radius: 15px;
+  transition: .35s;
+}
+
+.feature:hover {
+  transform: translateY(-8px);
+  border-color: #9273ff66;
+  box-shadow: 0 20px 50px #7654ff17;
+}
+
+.feature-icon {
+  font-size: 28px;
+  margin-bottom: 22px;
+}
+
+.feature h3 {
+  font-size: 17px;
+  margin-bottom: 12px;
+}
+
+.feature p {
+  color: var(--muted);
+  line-height: 1.8;
+  font-size: 13px;
+}
+
+/* CTA */
+
+.cta {
+  margin: 60px 7% 90px;
+  text-align: center;
+  padding: 75px 25px;
+  border: 1px solid #9273ff38;
+  border-radius: 20px;
+  background:
+    radial-gradient(ellipse at center, #7351c52c, transparent 70%),
+    #11101e;
+}
+
+.cta h2 {
+  font-size: clamp(28px, 4vw, 43px);
+  margin-bottom: 15px;
+}
+
+.cta p {
+  color: var(--muted);
+  font-size: 14px;
+  margin-bottom: 25px;
+}
+
+footer {
+  padding: 30px 7%;
+  border-top: 1px solid #ffffff12;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  color: #77778d;
+  font-size: 12px;
+}
+
+/* RESPONSIVE */
+
+@media(max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+    padding-top: 70px;
+  }
+  .hero-copy { text-align: center; }
+  .hero p { margin-left: auto; margin-right: auto; }
+  .hero-buttons { justify-content: center; }
+  .scene { margin-top: 20px; }
+  .features { grid-template-columns: 1fr 1fr; }
+}
+
+@media(max-width: 600px) {
+  nav { padding: 0 5%; height: 70px; }
+  .nav-links { display: none; }
+  .hero { padding: 65px 6% 35px; }
+  .hero h1 { letter-spacing: -2px; }
+  .scene { min-height: 360px; }
+  .editor { transform: none; animation: none; }
+  .preview { height: 160px; }
+  .card-one { right: -5px; }
+  .card-two { left: -5px; }
+  .features { grid-template-columns: 1fr; }
+  section.content { padding: 65px 6%; }
+  .cta { margin: 35px 5% 60px; }
+  footer { flex-direction: column; }
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+  <div class="logo">CHAT<span>MAX</span></div>
+
+  <div class="nav-links">
+    <a href="#home">Home</a>
+    <a href="#features">Features</a>
+    <a href="#studio">Studio</a>
+  </div>
+
+  <button class="nav-btn" onclick="goToStudio()">Launch Studio ↗</button>
+</nav>
+
+<header class="hero" id="home">
+
+  <div class="hero-copy">
+    <div class="tag">✦ THE FUTURE OF VIDEO CREATION</div>
+
+    <h1>
+      Create Beyond<br>
+      <span class="gradient-text">Imagination.</span>
+    </h1>
+
+    <p>
+      Meet your intelligent video creation workspace.
+      Research ideas, organize media, build cinematic
+      scenes and bring your creative vision to life.
+    </p>
+
+    <div class="hero-buttons">
+      <button class="primary-btn" onclick="goToStudio()">
+        Explore CHATMAX →
+      </button>
+
+      <a class="secondary-btn" href="#features">
+        Discover Features
+      </a>
+    </div>
+
+    <div class="note">
+      AI-POWERED CREATIVE WORKSPACE · BUILT FOR CREATORS
+    </div>
+  </div>
+
+  <div class="scene">
+    <div class="orb"></div>
+
+    <div class="editor">
+      <div class="editor-top">
+        <div class="dots"><i></i><i></i><i></i></div>
+        <div class="editor-title">CHATMAX CREATIVE STUDIO</div>
+        <div style="color:#9b8aff;font-size:11px">● LIVE</div>
+      </div>
+
+      <div class="preview">
+        <div class="play">▶</div>
+        <div class="preview-label">CINEMATIC VIDEO PREVIEW</div>
+      </div>
+
+      <div class="timeline-ui">
+        <div style="font-size:10px;color:#9999b1;margin-bottom:10px">
+          EDITING TIMELINE
+        </div>
+
+        <div class="track">
+          <div class="clip" style="width:35%"></div>
+          <div class="clip" style="width:25%"></div>
+          <div class="clip" style="width:30%"></div>
+        </div>
+
+        <div class="track">
+          <div class="audio" style="width:90%"></div>
+        </div>
+
+        <div class="track">
+          <div class="clip" style="width:20%;opacity:.4"></div>
+          <div class="clip" style="width:35%;opacity:.4"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="float-card card-one">
+      <strong>✦ AI INTELLIGENCE</strong>
+      Creative workflow
+    </div>
+
+    <div class="float-card card-two">
+      <strong>◈ CINEMATIC ENGINE</strong>
+      Video workspace
+    </div>
+  </div>
+
+</header>
+
+<section class="content" id="features">
+
+  <div class="section-heading">
+    <div class="eyebrow">POWERFUL CREATIVE TOOLS</div>
+    <h2>One Studio. <span class="gradient-text">Infinite Possibilities.</span></h2>
+    <p>Everything your video workflow needs in one place.</p>
+  </div>
+
+  <div class="features">
+
+    <div class="feature">
+      <div class="feature-icon">🧠</div>
+      <h3>AI Video Intelligence</h3>
+      <p>Plan creative workflows and turn video ideas into structured projects.</p>
+    </div>
+
+    <div class="feature">
+      <div class="feature-icon">🎬</div>
+      <h3>Cinematic Editing</h3>
+      <p>Build scenes, organize tracks and prepare professional video edits.</p>
+    </div>
+
+    <div class="feature">
+      <div class="feature-icon">🔎</div>
+      <h3>Media Research</h3>
+      <p>Organize visual references and media sources for your projects.</p>
+    </div>
+
+    <div class="feature">
+      <div class="feature-icon">🎧</div>
+      <h3>Audio Intelligence</h3>
+      <p>Bring narration and audio assets into your editing workflow.</p>
+    </div>
+
+    <div class="feature">
+      <div class="feature-icon">✨</div>
+      <h3>Creative Assistant</h3>
+      <p>Use a conversational workspace to guide your creative process.</p>
+    </div>
+
+    <div class="feature">
+      <div class="feature-icon">📽️</div>
+      <h3>Video Production</h3>
+      <p>Build toward a complete production and export workflow.</p>
+    </div>
+
+  </div>
+</section>
+
+<div class="cta" id="studio">
+  <div class="eyebrow">YOUR CREATIVE WORKSPACE</div>
+  <h2>Ready to create something <span class="gradient-text">extraordinary?</span></h2>
+  <p>Welcome to CHATMAX VIDEO INTELLIGENCE.</p>
+  <button class="primary-btn" onclick="launchMessage()">
+    Enter Creative Studio →
+  </button>
+</div>
+
+<footer>
+  <div class="logo">CHAT<span>MAX</span></div>
+  <div>© 2026 CHATMAX VIDEO INTELLIGENCE</div>
+  <div>Created by Sharandeep Singh</div>
+</footer>
+
+<script>
+function goToStudio() {
+  document.getElementById("studio").scrollIntoView({
+    behavior: "smooth"
+  });
+}
+
+function launchMessage() {
+  alert("Welcome to CHATMAX! The editing studio will be connected in the next development stage.");
+}
+</script>
+
+</body>
+</html>

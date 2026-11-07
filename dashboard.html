@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CHATMAX — AI Video Studio</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+:root {
+  --bg:#080811;
+  --panel:#141421;
+  --border:#ffffff14;
+  --purple:#895eff;
+  --blue:#438dff;
+  --muted:#9292aa;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+  font-family:Inter,Arial,sans-serif;
+  background:var(--bg);
+  color:#fff;
+  min-height:100vh;
+}
+
+button{font:inherit;cursor:pointer}
+
+.app{display:flex;min-height:100vh}
+
+/* SIDEBAR */
+
+.sidebar{
+  width:255px;
+  background:#10101b;
+  border-right:1px solid var(--border);
+  padding:28px 18px;
+  position:fixed;
+  inset:0 auto 0 0;
+}
+
+.logo{
+  font-size:25px;
+  font-weight:900;
+  letter-spacing:2px;
+  padding:5px 12px 35px;
+}
+
+.logo span{color:#9876ff}
+
+.menu-label{
+  color:#77778e;
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:2px;
+  padding:15px 12px;
+}
+
+.nav-item{
+  display:block;
+  width:100%;
+  padding:14px;
+  margin:5px 0;
+  color:#aaaabd;
+  text-align:left;
+  text-decoration:none;
+  border:1px solid transparent;
+  border-radius:9px;
+  background:transparent;
+  font-size:13px;
+}
+
+.nav-item:hover,.nav-item.active{
+  color:white;
+  background:#825aff20;
+  border-color:#895eff40;
+}
+
+/* MAIN */
+
+.main{
+  margin-left:255px;
+  width:calc(100% - 255px);
+  padding:30px 4%;
+}
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding-bottom:25px;
+  border-bottom:1px solid var(--border);
+}
+
+.topbar small{color:var(--muted)}
+
+.profile{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-size:12px;
+}
+
+.avatar{
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,#895eff,#438dff);
+  font-weight:800;
+}
+
+.welcome{margin:42px 0 30px}
+
+.eyebrow{
+  color:#a78aff;
+  font-size:11px;
+  letter-spacing:2px;
+  font-weight:700;
+  margin-bottom:15px;
+}
+
+h1{
+  font-size:clamp(28px,4vw,43px);
+  letter-spacing:-1.5px;
+}
+
+.subtitle{
+  color:var(--muted);
+  margin-top:12px;
+  font-size:14px;
+  line-height:1.7;
+}
+
+/* BUTTONS */
+
+.primary{
+  border:0;
+  padding:14px 20px;
+  border-radius:9px;
+  background:linear-gradient(110deg,#805aff,#438dff);
+  color:white;
+  font-weight:700;
+}
+
+.secondary{
+  border:1px solid var(--border);
+  padding:13px 18px;
+  border-radius:9px;
+  background:#ffffff08;
+  color:white;
+}
+
+/* STATS */
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px;
+  margin:30px 0;
+}
+
+.stat{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:13px;
+  padding:23px;
+}
+
+.stat-label{color:var(--muted);font-size:12px}
+.stat-value{font-size:27px;font-weight:800;margin-top:12px}
+
+/* WORKSPACE */
+
+.section-title{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin:45px 0 20px;
+}
+
+.section-title h2{font-size:19px}
+
+.cards{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:20px;
+}
+
+.card{
+  padding:25px;
+  border-radius:15px;
+  border:1px solid var(--border);
+  background:linear-gradient(145deg,#19192a,#10101a);
+  transition:.25s;
+}
+
+.card:hover{
+  transform:translateY(-4px);
+  border-color:#895eff70;
+}
+
+.icon{
+  width:48px;
+  height:48px;
+  display:grid;
+  place-items:center;
+  border-radius:12px;
+  background:#895eff20;
+  font-size:23px;
+  margin-bottom:20px;
+}
+
+.card h3{font-size:16px;margin-bottom:10px}
+
+.card p{
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.8;
+  margin-bottom:20px;
+}
+
+.card button{
+  background:#895eff20;
+  border:1px solid #895eff50;
+  color:#c3b1ff;
+  padding:10px 15px;
+  border-radius:7px;
+  font-size:12px;
+  font-weight:700;
+}
+
+.badge{
+  display:inline-block;
+  font-size:10px;
+  color:#bcaaff;
+  background:#895eff20;
+  padding:6px 9px;
+  border-radius:20px;
+  margin-bottom:14px;
+}
+
+footer{
+  color:#656579;
+  font-size:11px;
+  padding:45px 0 15px;
+  text-align:center;
+}
+
+@media(max-width:850px){
+  .sidebar{width:75px;padding:20px 9px}
+  .logo{font-size:0;padding:10px 0 35px;text-align:center}
+  .logo:after{content:"C";font-size:25px;color:#9876ff}
+  .menu-label{display:none}
+  .nav-item{text-align:center;font-size:0;padding:15px 5px}
+  .nav-item::first-letter{font-size:19px}
+  .main{margin-left:75px;width:calc(100% - 75px)}
+}
+
+@media(max-width:600px){
+  .main{padding:20px 15px}
+  .stats{grid-template-columns:1fr}
+  .cards{grid-template-columns:1fr}
+  .topbar{align-items:flex-start;gap:10px}
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<aside class="sidebar">
+
+<div class="logo">CHAT<span>MAX</span></div>
+
+<div class="menu-label">WORKSPACE</div>
+
+<a href="#overview" class="nav-item active">⌂ &nbsp; Overview</a>
+<a href="#studio" class="nav-item">▣ &nbsp; AI Studio</a>
+<a href="#projects" class="nav-item">▤ &nbsp; My Projects</a>
+
+<div class="menu-label">CREATIVE TOOLS</div>
+
+<a href="#studio" class="nav-item">✦ &nbsp; AI Assistant</a>
+<a href="#studio" class="nav-item">◈ &nbsp; Media Research</a>
+<a href="#studio" class="nav-item">♫ &nbsp; Audio Studio</a>
+
+<div class="menu-label">ACCOUNT</div>
+
+<button class="nav-item" id="logout">⇥ &nbsp; Sign Out</button>
+
+</aside>
+
+<main class="main">
+
+<header class="topbar">
+<div>
+<strong>Creative Workspace</strong><br>
+<small>CHATMAX VIDEO INTELLIGENCE</small>
+</div>
+
+<div class="profile">
+<div class="avatar">C</div>
+<div>
+<strong id="userName">Creator</strong><br>
+<small id="userEmail">Loading account...</small>
+</div>
+</div>
+</header>
+
+<section class="welcome" id="overview">
+
+<div class="eyebrow">✦ YOUR AI CREATIVE WORKSPACE</div>
+
+<h1>Welcome to CHATMAX.</h1>
+
+<p class="subtitle">
+Your creative command center for intelligent video production,
+documentary storytelling and cinematic editing.
+</p>
+
+</section>
+
+<section class="stats">
+
+<div class="stat">
+<div class="stat-label">TOTAL PROJECTS</div>
+<div class="stat-value">0</div>
+</div>
+
+<div class="stat">
+<div class="stat-label">AI WORKSPACE</div>
+<div class="stat-value">Ready</div>
+</div>
+
+<div class="stat">
+<div class="stat-label">ACCOUNT STATUS</div>
+<div class="stat-value" style="color:#75e6a5">Active</div>
+</div>
+
+</section>
+
+<div class="section-title" id="studio">
+<h2>Creative Studio</h2>
+<span class="badge">CHATMAX AI</span>
+</div>
+
+<section class="cards">
+
+<div class="card">
+<div class="icon">🎬</div>
+<h3>AI Video Editor</h3>
+<p>
+Your future editing workspace for video uploads,
+scenes, timelines, transitions and cinematic exports.
+</p>
+<button onclick="comingSoon()">Open Editor →</button>
+</div>
+
+<div class="card">
+<div class="icon">🧠</div>
+<h3>CHATMAX AI Assistant</h3>
+<p>
+Your AI editing assistant for video planning,
+documentary workflows and creative direction.
+</p>
+<button onclick="comingSoon()">Launch Assistant →</button>
+</div>
+
+<div class="card">
+<div class="icon">🔎</div>
+<h3>Media Research</h3>
+<p>
+A workspace for organizing visual references,
+historical media and research sources.
+</p>
+<button onclick="comingSoon()">Explore Media →</button>
+</div>
+
+<div class="card">
+<div class="icon">🎧</div>
+<h3>Audio Studio</h3>
+<p>
+Prepare narration, audio assets and voice-over
+workflows for documentary projects.
+</p>
+<button onclick="comingSoon()">Open Audio Studio →</button>
+</div>
+
+</section>
+
+<div class="section-title" id="projects">
+<h2>My Projects</h2>
+</div>
+
+<div class="card">
+<div class="icon">📁</div>
+<h3>No projects yet</h3>
+<p>
+Your project workspace is ready. Project creation,
+saving and editing features will be connected next.
+</p>
+<button onclick="comingSoon()">Create Project →</button>
+</div>
+
+<footer>
+CHATMAX VIDEO INTELLIGENCE · YOUR CREATIVE WORKSPACE
+</footer>
+
+</main>
+</div>
+
+<script>
+const supabaseClient = window.supabase.createClient(
+"https://clhsubfpymlbfasivsgc.supabase.co",
+"sb_publishable_6qZPcZUtHeCX1IEHTRlAOQ_mHg3AslU"
+);
+
+async function checkSession(){
+  const {data,error}=await supabaseClient.auth.getSession();
+
+  if(error || !data.session){
+    window.location.replace("login.html");
+    return;
+  }
+
+  const email=data.session.user.email || "Creator";
+
+  document.getElementById("userEmail").textContent=email;
+  document.getElementById("userName").textContent=email.split("@")[0];
+}
+
+document.getElementById("logout").addEventListener("click",async()=>{
+  await supabaseClient.auth.signOut();
+  window.location.replace("login.html");
+});
+
+function comingSoon(){
+  alert("This feature is being developed for CHATMAX.");
+}
+
+checkSession();
+</script>
+
+</body>
+</html>
